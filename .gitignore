@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase config (provided later — keep out of git)
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
+
+# Android signing
+/android/key.properties
+*.jks
+*.keystore

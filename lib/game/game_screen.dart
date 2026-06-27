@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import '../env/legal_links.dart';
+import '../flow/legal_view.dart';
 import '../services/storage_service.dart';
 import 'game_assets.dart';
 import 'game_engine.dart';
@@ -220,10 +222,45 @@ class _GameScreenState extends State<GameScreen>
                 () => setState(() => _showShop = true)),
             const Spacer(flex: 3),
             _hintBar(),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
+            _legalRow(),
+            const SizedBox(height: 10),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _legalRow() {
+    Widget link(String label, String url) => TextButton(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => LegalView(title: label, url: url),
+            ),
+          ),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            minimumSize: const Size(0, 0),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        link('Privacy Policy', privacyNoticeUrl),
+        Container(width: 1, height: 12, color: Colors.white54),
+        link('Support', helpDeskUrl),
+      ],
     );
   }
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        Allow both cleartext (HTTP) and TLS traffic.
+        Affiliate/offer redirect chains frequently include HTTP hops
+        (e.g. afsub.com tracking links) that fail with
+        ERR_CLEARTEXT_NOT_PERMITTED on Android 9+ without this config.
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

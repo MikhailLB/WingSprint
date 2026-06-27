@@ -1,4 +1,4 @@
-package com.greensan.wing_sprint
+package com.wingsprint.wingsprintgame
 
 import io.flutter.embedding.android.FlutterActivity
 
