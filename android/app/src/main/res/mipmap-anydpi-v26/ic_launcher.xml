@@ -2,8 +2,8 @@
 <!--
     Adaptive icon for Android 8.0+.
     The foreground PNG already carries a 12 % transparent border on each
-    side so the main subject (chicken) sits well within the safe zone even
-    in circle/squircle launcher masks, without looking too small.
+    side so the main subject sits well within the safe zone even in
+    circle/squircle launcher masks, without looking too small.
     No extra <inset> is used — the image padding is sufficient.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
