@@ -1,7 +1,7 @@
 name: wing_sprint
 description: "Wing Sprint — chicken courier arcade game."
 publish_to: 'none'
-version: 1.0.1+4
+version: 1.0.1+5
 
 environment:
   sdk: ^3.12.2
@@ -50,7 +50,7 @@ flutter_launcher_icons:
   #     so the chicken stays within the 72dp safe zone without being tiny.
   android: true
   image_path_android: "assets/icon2.png"   # legacy fallback (API < 26 only)
-  adaptive_icon_background: "#071A2B"
+  adaptive_icon_background: "#120A05"
   adaptive_icon_foreground: "assets/icon2_fg.png"
   min_sdk_android: 30
 

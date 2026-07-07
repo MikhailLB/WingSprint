@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Adaptive icon for Android 8.0+.
-    The foreground PNG already carries a 12 % transparent border on each
-    side so the main subject sits well within the safe zone even in
-    circle/squircle launcher masks, without looking too small.
-    No extra <inset> is used — the image padding is sufficient.
+    The foreground PNG has a 10 % transparent border added by
+    tool/make_adaptive_fg.dart. The icon already has natural dark
+    margins around the centred subject, so minimal extra padding is
+    needed. No <inset> wrapper — double-shrinking would make it too small.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background"/>

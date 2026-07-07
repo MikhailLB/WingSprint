@@ -288,13 +288,19 @@ class _PortalStageState extends State<PortalStage>
   if (window.__wsSafeKill) return;
   window.__wsSafeKill = true;
   var STYLE_ID='__ws_safe';
+  // Only neutralise the safe-area CSS *variables* globally (so sites that
+  // read env()-derived custom props don't leave a blank strip) and the
+  // top padding/margin on known header WRAPPER elements. We deliberately
+  // never touch html/body/#app/#root padding-left/right or margin: those
+  // are load-bearing for a site's own responsive layout, and zeroing them
+  // collapses the page's side gutters (columns get crushed to the edge).
   var CSS=':root{'
     +'--safe-area-inset-top:0px!important;--safe-area-inset-right:0px!important;'
     +'--safe-area-inset-bottom:0px!important;--safe-area-inset-left:0px!important;'
     +'--sat:0px!important;--sar:0px!important;--sab:0px!important;--sal:0px!important;'
     +'}'
-    +'html,body,#app,#root,#__nuxt,#__layout{padding-top:0!important;'
-    +'padding-left:0!important;padding-right:0!important;margin-top:0!important;}';
+    +'.gameview-mobile-header,.app-header{'
+    +'padding-top:0!important;margin-top:0!important;}';
   function kbOpen(){
     if(!window.visualViewport) return false;
     return window.visualViewport.height < window.innerHeight*0.75;

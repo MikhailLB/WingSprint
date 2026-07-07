@@ -45,7 +45,7 @@ class AgentClient extends http.BaseClient {
         final fingerprint =
             a.display.isNotEmpty ? a.display : (a.id.isNotEmpty ? a.id : 'V');
         _ua = _composeAndroid(
-          release: a.version.release,
+          release: _marketingVersion(a.version.release, a.version.sdkInt),
           brand: a.brand,
           model: a.model,
           build: fingerprint,
@@ -72,6 +72,26 @@ class AgentClient extends http.BaseClient {
 
   static String _orFallback(String value, String fallback) =>
       value.isEmpty ? fallback : value;
+
+  // Maps the API level to its marketing OS version — some OEM images
+  // report Build.VERSION.RELEASE incorrectly (empty, or clobbered with
+  // the API level itself), which would otherwise leak the SDK number
+  // into the UA where a real Android version (e.g. "14") is expected.
+  static const Map<int, String> _sdkToMarketing = {
+    30: '11', 31: '12', 32: '12', 33: '13', 34: '14', 35: '15', 36: '16',
+  };
+
+  static String _marketingVersion(String release, int sdkInt) {
+    final trimmed = release.trim();
+    final asInt = int.tryParse(trimmed);
+    // Real Android release strings never reach the 20s/30s — those
+    // values belong to the API level, so treat them as the OEM bug
+    // above and recover the version from the SDK-level table instead.
+    final looksLikeSdkLevel = asInt != null && asInt >= 20;
+    if (trimmed.isNotEmpty && !looksLikeSdkLevel) return trimmed;
+    return _sdkToMarketing[sdkInt] ??
+        (sdkInt > 20 ? '${sdkInt - 20}' : '14');
+  }
 
   static String _composeAndroid({
     required String release,

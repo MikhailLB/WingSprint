@@ -3,13 +3,18 @@
 // ============================================================
 // MAKE ADAPTIVE FG — foreground layer for the Android adaptive icon
 // ============================================================
-// Android adaptive icons display a 72×72dp "safe zone" inside a
-// 108×108dp canvas. Content outside the safe zone may be clipped by
-// the launcher's mask shape (circle, squircle, rounded square, …).
+// Android adaptive icons display a "safe zone" (official guidance: keep
+// critical content within a centred ~66dp circle inside the 108dp
+// canvas, i.e. roughly 61 % of the canvas diameter — about 19-20 %
+// margin on every side) inside a 108×108dp canvas. Content outside that
+// zone gets clipped differently by every launcher's mask shape (circle,
+// squircle, rounded square, …).
 //
-// This tool adds a transparent border equal to ~12 % of the original
-// icon's dimension on each side so the main subject (the chicken) stays
-// within the safe zone without becoming too small.
+// The source artwork is a full-bleed design (flames/labels touch every
+// edge with no built-in margin), so it needs a sizeable transparent
+// border added here — NOT the small ~12 % used for icons that already
+// have breathing room — or the corner labels get chopped hard by a
+// circular mask.
 //
 //   dart run tool/make_adaptive_fg.dart
 //
@@ -21,8 +26,10 @@ import 'dart:io';
 import 'package:image/image.dart' as img;
 
 // Border as a fraction of the source icon's dimension.
-// 12 % keeps the subject prominent while fitting the official safe zone.
-const double _borderFraction = 0.12;
+// 10 % of the source: the icon already has natural dark margins
+// around the centred chicken, so a small border is enough to stay
+// within the safe zone without making the subject look too small.
+const double _borderFraction = 0.10;
 
 void main() {
   final srcFile = File('assets/icon2.png');

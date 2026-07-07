@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../core/attribution_hub.dart';
@@ -292,9 +293,31 @@ class _BootGateState extends State<BootGate>
   }
 }
 
-class _ProgressRail extends StatelessWidget {
+class _ProgressRail extends StatefulWidget {
   final double value;
   const _ProgressRail({required this.value});
+
+  @override
+  State<_ProgressRail> createState() => _ProgressRailState();
+}
+
+class _ProgressRailState extends State<_ProgressRail> {
+  int _dotCount = 0;
+  Timer? _dotTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _dotTimer = Timer.periodic(const Duration(milliseconds: 430), (_) {
+      if (mounted) setState(() => _dotCount = (_dotCount + 1) % 4);
+    });
+  }
+
+  @override
+  void dispose() {
+    _dotTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +339,7 @@ class _ProgressRail extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: value),
+                tween: Tween(begin: 0, end: widget.value),
                 duration: const Duration(milliseconds: 420),
                 curve: Curves.easeOut,
                 builder: (_, v, _) => FractionallySizedBox(
@@ -334,15 +357,35 @@ class _ProgressRail extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
-          'LOADING',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 4,
-            shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
-          ),
+        // "LOADING" stays fixed width; only the dot suffix animates, in a
+        // reserved-width box so the label never jitters side to side.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'LOADING',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 4,
+                shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+              ),
+            ),
+            SizedBox(
+              width: 24,
+              child: Text(
+                '.' * _dotCount,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

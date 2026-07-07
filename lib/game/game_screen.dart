@@ -30,7 +30,6 @@ class _GameScreenState extends State<GameScreen>
   Duration _lastTick = Duration.zero;
 
   bool _inGame = false;
-  bool _showShop = false;
   bool _resultBanked = false;
   int _currentLevel = 1;
 
@@ -92,14 +91,12 @@ class _GameScreenState extends State<GameScreen>
     _engine.startLevel(LevelConfig.forLevel(level), _loadout);
     setState(() {
       _inGame = true;
-      _showShop = false;
     });
   }
 
   void _returnToMenu() {
     setState(() {
       _inGame = false;
-      _showShop = false;
     });
   }
 
@@ -216,10 +213,6 @@ class _GameScreenState extends State<GameScreen>
                   const [Color(0xFF66BB6A), Color(0xFF43A047)],
                   () => _startLevel(_currentLevel)),
             ),
-            const SizedBox(height: 16),
-            _bigButton('UPGRADES', Icons.storefront,
-                const [Color(0xFFFFC107), Color(0xFFFF9800)],
-                () => setState(() => _showShop = true)),
             const Spacer(flex: 3),
             _hintBar(),
             const SizedBox(height: 8),
@@ -249,7 +242,6 @@ class _GameScreenState extends State<GameScreen>
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              decoration: TextDecoration.underline,
             ),
           ),
         );
@@ -301,7 +293,6 @@ class _GameScreenState extends State<GameScreen>
         if (_engine.state == GameState.paused) _buildPause(),
         if (_engine.state == GameState.levelComplete) _buildLevelComplete(),
         if (_engine.state == GameState.gameOver) _buildGameOver(),
-        if (_showShop) _buildShop(),
       ],
     );
   }
@@ -517,11 +508,6 @@ class _GameScreenState extends State<GameScreen>
                 const [Color(0xFF66BB6A), Color(0xFF43A047)],
                 () => _startLevel(_currentLevel)),
             const SizedBox(height: 14),
-            _bigButton('UPGRADES', Icons.storefront,
-                const [Color(0xFFFFC107), Color(0xFFFF9800)], () {
-              setState(() => _showShop = true);
-            }),
-            const SizedBox(height: 14),
             _bigButton('MENU', Icons.home,
                 const [Color(0xFF78909C), Color(0xFF546E7A)], _returnToMenu),
           ]),
@@ -545,158 +531,6 @@ class _GameScreenState extends State<GameScreen>
                   fontWeight: FontWeight.bold)),
         ]),
       );
-
-  // ── SHOP ──
-
-  Widget _buildShop() {
-    final s = widget.storage;
-    return Container(
-      color: Colors.black.withValues(alpha: 0.92),
-      child: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 14),
-            const Text('UPGRADES',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 3)),
-            const SizedBox(height: 8),
-            _coinPill(s.coins),
-            const SizedBox(height: 12),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: kUpgrades.length,
-                itemBuilder: (ctx, i) => _shopRow(kUpgrades[i]),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: _bigButton('CLOSE', Icons.close,
-                  const [Color(0xFF78909C), Color(0xFF546E7A)],
-                  () => setState(() => _showShop = false)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _shopRow(UpgradeDef def) {
-    final s = widget.storage;
-    final tier = s.upgradeTier(def.type);
-    final maxed = tier >= def.maxTier;
-    final cost = maxed ? 0 : def.costs[tier];
-    final canAfford = !maxed && s.coins >= cost;
-    final nextLabel = def.tierLabels[(tier + (maxed ? 0 : 1))
-        .clamp(0, def.tierLabels.length - 1)];
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: def.color.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: def.color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(def.icon, color: def.color, size: 26),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(def.title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold)),
-                Text(def.desc,
-                    style: const TextStyle(
-                        color: Colors.white60, fontSize: 11.5)),
-                const SizedBox(height: 4),
-                Row(children: [
-                  ...List.generate(
-                      def.maxTier,
-                      (i) => Container(
-                            width: 16,
-                            height: 6,
-                            margin: const EdgeInsets.only(right: 3),
-                            decoration: BoxDecoration(
-                              color: i < tier
-                                  ? def.color
-                                  : Colors.white.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          )),
-                  const SizedBox(width: 6),
-                  Text(maxed ? 'MAX' : '→ $nextLabel',
-                      style: TextStyle(
-                          color: def.color,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold)),
-                ]),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: maxed || !canAfford ? null : () => _buyUpgrade(def),
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: maxed
-                    ? null
-                    : (canAfford
-                        ? const LinearGradient(
-                            colors: [Color(0xFFFFC107), Color(0xFFFF9800)])
-                        : null),
-                color: maxed
-                    ? Colors.green.withValues(alpha: 0.2)
-                    : (canAfford ? null : Colors.white.withValues(alpha: 0.08)),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: maxed
-                  ? const Icon(Icons.check, color: Colors.green, size: 20)
-                  : Row(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.attach_money,
-                          color: canAfford ? Colors.white : Colors.white38,
-                          size: 16),
-                      Text('$cost',
-                          style: TextStyle(
-                              color: canAfford ? Colors.white : Colors.white38,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900)),
-                    ]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _buyUpgrade(UpgradeDef def) async {
-    final s = widget.storage;
-    final tier = s.upgradeTier(def.type);
-    if (tier >= def.maxTier) return;
-    final cost = def.costs[tier];
-    if (s.coins < cost) return;
-    await s.setCoins(s.coins - cost);
-    await s.setUpgradeTier(def.type, tier + 1);
-    if (mounted) setState(() {});
-  }
 
   // ── shared button ──
 
