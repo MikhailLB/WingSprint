@@ -26,10 +26,15 @@ import 'dart:io';
 import 'package:image/image.dart' as img;
 
 // Border as a fraction of the source icon's dimension.
-// 10 % of the source: the icon already has natural dark margins
-// around the centred chicken, so a small border is enough to stay
-// within the safe zone without making the subject look too small.
-const double _borderFraction = 0.10;
+// 18 % of the source: adaptive-icon launchers only ever show the
+// central 72/108dp of the canvas (the outer ~16.7 % is cropped even by
+// a square mask), and a circular mask additionally clips to the
+// inscribed circle. This border pulls the centred chicken's silhouette
+// (hat → tuxedo → feet, pointing arm) inside that safe circle so it
+// reads fully on square, rounded AND circular masks, while only the
+// outer background flames get trimmed on round masks — which looks
+// natural. Kept as low as possible so the subject stays large.
+const double _borderFraction = 0.18;
 
 void main() {
   final srcFile = File('assets/icon2.png');

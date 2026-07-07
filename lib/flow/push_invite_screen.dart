@@ -143,27 +143,35 @@ class _SkipButtonState extends State<_SkipButton> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 90),
-        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 36),
+        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 44),
         decoration: BoxDecoration(
+          // Solid dark fill so the label reads clearly over the busy art.
           color: _down
-              ? Colors.white.withValues(alpha: 0.18)
-              : Colors.white.withValues(alpha: 0.10),
+              ? Colors.black.withValues(alpha: 0.72)
+              : Colors.black.withValues(alpha: 0.55),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: Colors.white.withValues(alpha: _down ? 0.70 : 0.50),
-            width: 1.5,
+            color: Colors.white.withValues(alpha: _down ? 1.0 : 0.90),
+            width: 2.2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.45),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: const Text(
           'Skip',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.4,
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.6,
             shadows: [
               Shadow(
-                  color: Colors.black54, blurRadius: 6, offset: Offset(0, 1)),
+                  color: Colors.black87, blurRadius: 6, offset: Offset(0, 1)),
             ],
           ),
         ),

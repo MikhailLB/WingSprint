@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Adaptive icon for Android 8.0+.
-    The foreground PNG has a 10 % transparent border added by
-    tool/make_adaptive_fg.dart. The icon already has natural dark
-    margins around the centred subject, so minimal extra padding is
-    needed. No <inset> wrapper — double-shrinking would make it too small.
+    The foreground PNG has an 18 % transparent border added by
+    tool/make_adaptive_fg.dart so the centred chicken fits the safe
+    circle of every launcher mask (square / rounded / circle). No
+    <inset> wrapper — double-shrinking would make the subject too small.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background"/>
